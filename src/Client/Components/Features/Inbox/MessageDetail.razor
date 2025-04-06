@@ -1,0 +1,23 @@
+@page "/messages/{Id}"
+
+<RadzenButton Text="Back to Inbox"
+              Icon="arrow_back"
+              Click="GoBack"
+              Style="margin: 1rem 2rem;" />
+
+<RadzenCard Style="margin: 2rem;">
+    @if (Message == null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <h3>@Message.Subject</h3>
+        <p>
+            <strong>From:</strong> @Message.From<br />
+            <strong>Received:</strong> @Message.Received.ToString("g")
+        </p>
+        <hr/>
+        <p>@Message.Body</p>
+    }
+</RadzenCard>

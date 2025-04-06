@@ -1,0 +1,16 @@
+@page "/inbox"
+
+<h3>Inbox</h3>
+
+<RadzenDataGrid TItem="MessageSummary" Data="inbox" RowSelect="OnRowSelect" ColumnWidth="200px">
+    <Columns>
+        <RadzenDataGridColumn TItem="MessageSummary" Property="Subject" Title="Subject" />
+        <RadzenDataGridColumn TItem="MessageSummary" Property="From" Title="From" />
+        <RadzenDataGridColumn TItem="MessageSummary" Property="Received" Title="Received" FormatString="{0:g}" />
+        <RadzenDataGridColumn TItem="MessageSummary" Context="msg" Title="Actions">
+            <Template Context="msg">
+                <RadzenButton Icon="visibility" Size="ButtonSize.Small" Click="@(() => ViewMessage(msg.Id))" />
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>

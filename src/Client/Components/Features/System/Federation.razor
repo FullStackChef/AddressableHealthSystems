@@ -1,0 +1,26 @@
+@page "/system/federation"
+
+<h3>Federated Hubs</h3>
+
+<RadzenDataGrid Data="@federatedPeers"
+                TItem="FederationPeer"
+                AllowPaging="true"
+                PageSize="10"
+                AllowSorting="true"
+                AllowFiltering="true"
+                RowSelect="@OnSelect">
+
+    <Columns>
+        <RadzenDataGridColumn TItem="FederationPeer" Property="Url" Title="Remote AHS URL" />
+        <RadzenDataGridColumn TItem="FederationPeer" Property="Role" Title="Role" />
+        <RadzenDataGridColumn TItem="FederationPeer" Property="LastDiscovery" Title="Last Discovery" FormatString="{0:u}" />
+        <RadzenDataGridColumn TItem="FederationPeer" Property="TrustStatus" Title="Trust" />
+        <RadzenDataGridColumn TItem="FederationPeer" Property="SyncStatus" Title="Sync" />
+        <RadzenDataGridColumn TItem="FederationPeer" Context="peer" Title="Actions">
+            <Template Context="peer">
+                <RadzenButton Icon="search" Text="Discover" Size="ButtonSize.Small" Click="@(() => Rediscover(peer))" Style="margin-right: 0.5rem;" />
+                <RadzenButton Icon="sync" Text="Sync" Size="ButtonSize.Small" Click="@(() => SyncPeer(peer))" />
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>

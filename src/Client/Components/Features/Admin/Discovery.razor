@@ -1,0 +1,48 @@
+﻿@page "/admin/discovery"
+
+<h3>Discovery</h3>
+
+<RadzenTemplateForm Data="@discoveryRequest" Submit="@((DiscoveryRequest args) => RunDiscovery(args))" Style="max-width: 600px;">
+    <RadzenFieldset Text="Discover Remote AHS Instance">
+        <RadzenTextBox Name="EndpointUrl" @bind-Value="discoveryRequest.EndpointUrl" Placeholder="https://remote.ahs.org/fhir" Style="width:100%;" />
+        <RadzenRequiredValidator Component="EndpointUrl" Text="Endpoint URL is required" />
+        <RadzenButton Text="Run Discovery" Icon="search" Style="margin-top: 1rem;" ButtonType="ButtonType.Submit" />
+    </RadzenFieldset>
+</RadzenTemplateForm>
+
+@if (discoveryResult != null)
+{
+    <RadzenCard Style="margin-top: 2rem;">
+        <h4>Discovery Result</h4>
+        <p><strong>Remote URL:</strong> @discoveryResult.RemoteName</p>
+        <p><strong>Software:</strong> @discoveryResult.SoftwareName</p>
+        <p><strong>Version:</strong> @discoveryResult.Version</p>
+        <p><strong>Role:</strong> @discoveryResult.Role</p>
+        <p><strong>Compatible:</strong> @(discoveryResult.IsAhsCompatible ? "✅ Yes" : "❌ No")</p>
+        <p><strong>Trusted:</strong> @(discoveryResult.IsTrusted ? "✅ Trusted" : "❌ Untrusted")</p>
+        @if (!string.IsNullOrEmpty(discoveryResult.CertificateThumbprint))
+        {
+            <p><strong>Certificate Thumbprint:</strong> @discoveryResult.CertificateThumbprint</p>
+        }
+
+        @if (discoveryResult.SupportedResources?.Any() == true)
+        {
+            <RadzenFieldset Text="Supported FHIR Resources">
+                <ul>
+                    @foreach (var resource in discoveryResult.SupportedResources)
+                    {
+                        <li>@resource</li>
+                    }
+                </ul>
+            </RadzenFieldset>
+        }
+
+        @if (discoveryResult.IsAhsCompatible)
+        {
+            <RadzenButton Text="Sync to Directory"
+                          Icon="sync"
+                          Click="SyncToDirectory"
+                          Style="margin-top: 1rem;" />
+        }
+    </RadzenCard>
+}

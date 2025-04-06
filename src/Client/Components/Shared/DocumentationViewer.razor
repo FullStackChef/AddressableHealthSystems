@@ -1,0 +1,6 @@
+﻿<div class="rz-overflow-auto rz-h-100">
+    @ChildContent
+</div>
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; } = default!;
+}

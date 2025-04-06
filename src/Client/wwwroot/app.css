@@ -1,0 +1,30 @@
+html, body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.modal-markdown {
+    font-size: small;
+    line-height: 1.6;
+    padding: 1rem;
+    max-width: 100%;
+    overflow-wrap: break-word;
+}
+
+    .modal-markdown h1,
+    .modal-markdown h2,
+    .modal-markdown h3 {
+        font-size:large;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .modal-markdown p {
+        margin-bottom: 1rem;
+        font-size: small;
+    }
+
+    .modal-markdown code {
+        font-size: 0.85rem;
+        padding: 0.15rem 0.3rem;
+        border-radius: 4px;
+    }

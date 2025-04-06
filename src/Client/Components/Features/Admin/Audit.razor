@@ -1,0 +1,20 @@
+@page "/admin/audit"
+
+<h3>Audit Log</h3>
+
+<RadzenDataGrid Data="@auditEvents"
+                TItem="AuditEventModel"
+                AllowPaging="true"
+                PageSize="10"
+                AllowFiltering="true"
+                AllowSorting="true">
+
+    <Columns>
+        <RadzenDataGridColumn TItem="AuditEventModel" Property="Timestamp" Title="Timestamp" FormatString="{0:u}" />
+        <RadzenDataGridColumn TItem="AuditEventModel" Property="EventType" Title="Event Type" />
+        <RadzenDataGridColumn TItem="AuditEventModel" Property="Actor" Title="Actor" />
+        <RadzenDataGridColumn TItem="AuditEventModel" Property="Target" Title="Target" />
+        <RadzenDataGridColumn TItem="AuditEventModel" Property="Status" Title="Status" />
+        <RadzenDataGridColumn TItem="AuditEventModel" Property="CorrelationId" Title="Correlation ID" />
+    </Columns>
+</RadzenDataGrid>

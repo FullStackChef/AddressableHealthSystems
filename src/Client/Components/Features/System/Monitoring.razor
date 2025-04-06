@@ -1,0 +1,12 @@
+﻿@page "/system/monitoring"
+
+<h3>System Monitoring</h3>
+
+<RadzenCard Style="margin-bottom: 2rem;">
+    <h4>Platform Metrics</h4>
+    <p><strong>Total Messages:</strong> @stats.TotalMessages</p>
+    <p><strong>Active Tenants:</strong> @stats.ActiveTenants</p>
+    <p><strong>Failed Deliveries (24h):</strong> @stats.FailedDeliveries</p>
+    <p><strong>Federation Health:</strong> @(stats.FederationHealthy ? "✅ OK" : "❌ Issue")</p>
+    <p><strong>Audit Queue:</strong> @stats.AuditQueueStatus</p>
+</RadzenCard>

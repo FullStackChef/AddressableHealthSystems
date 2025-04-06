@@ -1,0 +1,24 @@
+@page "/admin/endpoints"
+
+<h3>Delivery Endpoints</h3>
+
+<RadzenDataGrid Data="@endpoints"
+                TItem="EndpointModel"
+                RowSelect="@OnRowSelect"
+                ColumnWidth="200px"
+                AllowFiltering="true"
+                AllowSorting="true"
+                AllowPaging="true"
+                PageSize="10">
+    <Columns>
+        <RadzenDataGridColumn TItem="EndpointModel" Property="Name" Title="Name" />
+        <RadzenDataGridColumn TItem="EndpointModel" Property="Address" Title="URL" />
+        <RadzenDataGridColumn TItem="EndpointModel" Property="Status" Title="Status" />
+        <RadzenDataGridColumn TItem="EndpointModel" Property="ConnectionType" Title="Connection Type" />
+        <RadzenDataGridColumn TItem="EndpointModel" Context="e" Title="Actions">
+            <Template Context="e">
+                <RadzenButton Icon="security" Size="ButtonSize.Small " Text="Validate" Click="@(args => ValidateEndpoint(e))" />
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>

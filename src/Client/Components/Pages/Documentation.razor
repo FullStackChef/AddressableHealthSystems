@@ -1,0 +1,85 @@
+﻿@page "/docs/{Section?}/{Slug?}"
+@inject IDocumentationService Docs
+@inject NavigationManager Navigation
+
+@if (Sections.Count == 0)
+{
+    <p><em>Loading documentation index...</em></p>
+}
+else
+{
+
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Wrap="FlexWrap.Wrap">
+        <RadzenPanelMenu>
+            @foreach (var section in Sections)
+            {
+                @RenderSection(section)
+            }
+        </RadzenPanelMenu>
+
+        @if (!string.IsNullOrWhiteSpace(Section) && !string.IsNullOrWhiteSpace(Slug))
+        {
+            if (MarkdownContent is null)
+            {
+                <p><em>Loading documentation content...</em></p>
+            }
+            else
+            {
+                <RadzenMarkdown Source="@MarkdownContent" Style="padding: 1rem;" />
+            }
+        }
+        else
+        {
+            <p><em>Select a page from the menu to get started.</em></p>
+        }
+    </RadzenStack>
+}
+@code {
+    [Parameter] public string? Section { get; set; }
+    [Parameter] public string? Slug { get; set; }
+
+    private List<DocSection> Sections = new();
+    private string? MarkdownContent;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Sections = Docs.GetSections().ToList();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(Section) && !string.IsNullOrWhiteSpace(Slug))
+        {
+            MarkdownContent = await Docs.GetMarkdownAsync(Section, Slug) ?? "# Not Found";
+        }
+    }
+
+    RenderFragment RenderSection(DocSection section) => builder =>
+    {
+        if (section.Pages.Count == 1)
+        {
+            var page = section.Pages[0];
+            builder.OpenComponent<RadzenPanelMenuItem>(0);
+            builder.AddAttribute(1, "Text", page.Title);
+            builder.AddAttribute(2, "Path", $"/docs/{section.Section}/{page.Slug}");
+            builder.CloseComponent();
+        }
+        else
+        {
+            builder.OpenComponent<RadzenPanelMenuItem>(0);
+            builder.AddAttribute(1, "Text", Docs.ToTitleCase(section.Section));
+            builder.AddAttribute(2, "Expanded", false);
+            builder.AddAttribute(3, "ChildContent", (RenderFragment)(childBuilder =>
+            {
+                foreach (var page in section.Pages)
+                {
+                    childBuilder.OpenComponent<RadzenPanelMenuItem>(0);
+                    childBuilder.AddAttribute(1, "Text", page.Title);
+                    childBuilder.AddAttribute(2, "Path", $"/docs/{section.Section}/{page.Slug}");
+                    childBuilder.CloseComponent();
+                }
+            }));
+            builder.CloseComponent();
+        }
+    };
+}

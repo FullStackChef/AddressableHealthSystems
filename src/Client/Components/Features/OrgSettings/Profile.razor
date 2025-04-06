@@ -1,0 +1,24 @@
+@page "/org-settings/profile"
+
+<h3>Organization Profile</h3>
+
+<RadzenTemplateForm Data="@org" Submit="@((OrgProfile args) => Save(args))">
+    <RadzenFieldset Text="Organization Details">
+        <RadzenLabel Text="Name" />
+        <RadzenTextBox @bind-Value="org.Name" Style="width: 100%;" />
+
+        <RadzenLabel Text="Org ID / OID" Style="margin-top: 1rem;" />
+        <RadzenTextBox @bind-Value="org.Identifier" Style="width: 100%;" />
+
+        <RadzenLabel Text="Email" Style="margin-top: 1rem;" />
+        <RadzenTextBox @bind-Value="org.Email" Style="width: 100%;" />
+
+        <RadzenLabel Text="Phone" Style="margin-top: 1rem;" />
+        <RadzenTextBox @bind-Value="org.Phone" Style="width: 100%;" />
+
+        <RadzenLabel Text="Address" Style="margin-top: 1rem;" />
+        <RadzenTextArea @bind-Value="org.Address" Rows="3" Style="width: 100%;" />
+
+        <RadzenButton Text="Save Changes" Icon="save" Style="margin-top: 1rem;" ButtonType="ButtonType.Submit" />
+    </RadzenFieldset>
+</RadzenTemplateForm>

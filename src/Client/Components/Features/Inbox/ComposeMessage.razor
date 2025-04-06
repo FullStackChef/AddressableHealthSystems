@@ -1,0 +1,22 @@
+@page "/inbox/compose"
+
+<h3>Compose Message</h3>
+
+<RadzenTemplateForm Data="@message" Submit="@((OutgoingMessage args)=>SendMessage(args))">
+    <RadzenFieldset Text="New Message">
+        <RadzenLabel Text="To" />
+        <RadzenDropDown @bind-Value="message.To"
+                        Data="@recipientOptions"
+                        TextProperty="Display"
+                        ValueProperty="Id"
+                        Style="width: 100%;" />
+
+        <RadzenLabel Text="Subject" Style="margin-top: 1rem;" />
+        <RadzenTextBox @bind-Value="message.Subject" Style="width: 100%;" />
+
+        <RadzenLabel Text="Body" Style="margin-top: 1rem;" />
+        <RadzenTextArea @bind-Value="message.Body" Rows="6" Style="width: 100%;" />
+
+        <RadzenButton Text="Send" Icon="send" Style="margin-top: 1rem;" ButtonType="ButtonType.Submit" />
+    </RadzenFieldset>
+</RadzenTemplateForm>

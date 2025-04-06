@@ -1,0 +1,27 @@
+@page "/admin/directory"
+
+<h3>Directory</h3>
+
+<RadzenTabs>
+    <Tabs>
+        <RadzenTabsItem Text="Organizations">
+            <RadzenDataGrid Data="@organizations" TItem="OrganizationModel" AllowFiltering="true" AllowPaging="true" PageSize="10">
+                <Columns>
+                    <RadzenDataGridColumn TItem="OrganizationModel" Property="Name" Title="Name" />
+                    <RadzenDataGridColumn TItem="OrganizationModel" Property="Type" Title="Type" />
+                    <RadzenDataGridColumn TItem="OrganizationModel" Property="Address" Title="Address" />
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenTabsItem>
+
+        <RadzenTabsItem Text="Practitioners">
+            <RadzenDataGrid Data="@practitioners" TItem="PractitionerModel" AllowFiltering="true" AllowPaging="true" PageSize="10">
+                <Columns>
+                    <RadzenDataGridColumn TItem="PractitionerModel" Property="FullName" Title="Name" />
+                    <RadzenDataGridColumn TItem="PractitionerModel" Property="Role" Title="Role" />
+                    <RadzenDataGridColumn TItem="PractitionerModel" Property="OrgName" Title="Organization" />
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenTabsItem>
+    </Tabs>
+</RadzenTabs>

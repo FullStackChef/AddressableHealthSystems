@@ -1,0 +1,28 @@
+<RadzenPanelMenu DisplayStyle="@(SidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)" ShowArrow="false">
+    <RadzenPanelMenuItem Text="Inbox" Icon="mail" title="Inbox">
+        <RadzenPanelMenuItem Text="Messages" Path="/inbox" Icon="inbox" title="View Inbox" />
+        <RadzenPanelMenuItem Text="Compose" Path="/inbox/compose" Icon="edit" title="Compose Message" />
+    </RadzenPanelMenuItem>
+
+    <RadzenPanelMenuItem Text="Admin" Icon="admin_panel_settings" title="Admin">
+        <RadzenPanelMenuItem Text="Endpoints" Path="/admin/endpoints" Icon="call_split" title="Endpoints" />
+        <RadzenPanelMenuItem Text="Discovery" Path="/admin/discovery" Icon="travel_explore" title="Discovery" />
+        <RadzenPanelMenuItem Text="Directory" Path="/admin/directory" Icon="contacts" title="Directory" />
+        <RadzenPanelMenuItem Text="Audit Log" Path="/admin/audit" Icon="receipt_long" title="Audit Log" />
+    </RadzenPanelMenuItem>
+
+    <RadzenPanelMenuItem Text="System" Icon="cloud" title="System">
+        <RadzenPanelMenuItem Text="Federation" Path="/system/federation" Icon="hub" title="Federation" />
+        <RadzenPanelMenuItem Text="Tenants" Path="/system/tenants" Icon="apartment" title="Tenants" />
+        <RadzenPanelMenuItem Text="Monitoring" Path="/system/monitoring" Icon="insights" title="Monitoring" />
+    </RadzenPanelMenuItem>
+
+    <RadzenPanelMenuItem Text="Org Settings" Icon="business" title="Org Settings">
+        <RadzenPanelMenuItem Text="Profile" Path="/org-settings/profile" Icon="badge" title="Organization Profile" />
+        <RadzenPanelMenuItem Text="Certificates" Path="/org-settings/certs" Icon="vpn_key" title="Certificates" />
+    </RadzenPanelMenuItem>
+</RadzenPanelMenu>
+
+@code {
+    [Parameter] public bool SidebarExpanded { get; set; }
+}

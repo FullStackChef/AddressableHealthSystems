@@ -1,0 +1,26 @@
+@page "/system/tenants"
+
+<h3>Registered Tenants</h3>
+
+<RadzenDataGrid Data="@tenants"
+                TItem="TenantModel"
+                AllowPaging="true"
+                PageSize="10"
+                AllowSorting="true"
+                AllowFiltering="true"
+                RowSelect="@OnSelect">
+
+    <Columns>
+        <RadzenDataGridColumn TItem="TenantModel" Property="Name" Title="Name" />
+        <RadzenDataGridColumn TItem="TenantModel" Property="OrgId" Title="Org ID" />
+        <RadzenDataGridColumn TItem="TenantModel" Property="Status" Title="Status" />
+        <RadzenDataGridColumn TItem="TenantModel" Property="MessageVolume" Title="Msg/30d" />
+        <RadzenDataGridColumn TItem="TenantModel" Property="AgentUrl" Title="Agent URL" />
+        <RadzenDataGridColumn TItem="TenantModel" Context="t" Title="Actions">
+            <Template Context="t">
+                <RadzenButton Icon="visibility" Size="ButtonSize.Small" Text="View" Click="@(() => NavigateToTenant(t.OrgId))" Style="margin-right: 0.5rem;" />
+                <RadzenButton Icon="pause" Size="ButtonSize.Small" Text="Suspend" ButtonStyle="ButtonStyle.Danger" Click="@(() => SuspendTenant(t))" />
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>

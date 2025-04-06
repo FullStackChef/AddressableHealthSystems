@@ -1,0 +1,108 @@
+﻿@inherits LayoutComponentBase
+@inject IDocumentationService Docs
+@inject NavigationManager Navigation
+
+<RadzenLayout>
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="0">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+            <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
+            <RadzenLabel Text="Addressable Health Systems" />
+            </RadzenStack>
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="2" AlignItems="AlignItems.Center">
+                <!-- Documentation badge -->
+                <RadzenButton Icon="help"
+                Variant="Variant.Text"
+                Size="ButtonSize.Small"
+                Click="@(() => ToggleDocumentation())"
+                title="View page help" />
+
+                <!-- Notifications icon with badge -->
+                <RadzenButton Icon="notifications"
+                Variant="Variant.Text" ButtonStyle="ButtonStyle.Light"
+                    Click="ShowNotifications"
+                    Size="ButtonSize.Small">
+                </RadzenButton>
+                
+            <RadzenProfileMenu >
+                <Template>
+                    <RadzenStack Orientation="Orientation.Horizontal" Gap="4">
+                      <RadzenIcon Icon="account_circle"  />  @UserDisplayName
+                    </RadzenStack>
+                </Template>
+                <ChildContent>
+                <RadzenProfileMenuItem Text="My Settings" Path="/settings" />
+                <RadzenProfileMenuItem Text="Logout" />
+                </ChildContent>
+            </RadzenProfileMenu></RadzenStack>
+           </RadzenStack>
+    </RadzenHeader>
+    <RadzenSidebar Responsive="false" Style="width: max-content">
+        <NavMenu SidebarExpanded="@sidebarExpanded"/>
+    </RadzenSidebar>
+    <RadzenBody Style="padding:0">
+        <RadzenSplitter>
+            <RadzenSplitterPane>
+                <RadzenCard Variant="Variant.Flat" class="rz-overflow-auto rz-h-100">
+            @Body
+                </RadzenCard>
+            </RadzenSplitterPane>
+            <RadzenSplitterPane Visible="documenationVisible" Size="30%">
+                <RadzenCard class="rz-overflow-auto rz-h-100 rz-p-4">
+                   @_documentation
+                </RadzenCard>
+            </RadzenSplitterPane>
+            </RadzenSplitter>
+    </RadzenBody>
+</RadzenLayout>
+@code {
+    bool sidebarExpanded = false;
+    bool documenationVisible = false;
+    private MarkupString? _documentation;
+    private string UserDisplayName => "Dr. Jenkins"; // Replace with claims-based value
+    private int NotificationCount => 3; // later: inject notification service
+
+    protected override void OnInitialized()
+{
+    Navigation.LocationChanged += OnRouteChanged;
+}
+
+private async void OnRouteChanged(object? sender, LocationChangedEventArgs e)
+{
+        await LoadDocumentationForRoute();
+        StateHasChanged();
+}
+
+
+private async Task LoadDocumentationForRoute(){
+    var routePath = Navigation.ToBaseRelativePath(Navigation.Uri);
+    var (section, slug) = ParseSlug(routePath);
+    var content = await Docs.GetMarkdownAsync(section, slug) ?? $"# No documentation found for `{section}/{slug}`.";
+    _documentation = (MarkupString)Markdig.Markdown.ToHtml(content);
+    StateHasChanged();
+}
+private void ToggleDocumentation(){
+    documenationVisible = !documenationVisible;
+}
+    private void ShowNotifications()
+    {
+        Console.WriteLine("Opening notifications panel...");
+        // later: open a RadzenDialog or sidebar
+    }
+
+   
+
+private void Logout()
+{
+    Navigation.NavigateTo("/logout", forceLoad: true);
+}
+
+
+    private (string, string) ParseSlug(string path)
+    {
+        var segments = path.Trim('/').Split('/');
+        return segments.Length >= 2
+            ? (segments[0], segments[1])
+            : ("user", segments.FirstOrDefault() ?? "unknown");
+    }
+}

@@ -1,0 +1,28 @@
+@page "/settings"
+
+<h3>My Settings</h3>
+
+<RadzenCard>
+    <RadzenFieldset Text="Profile">
+        <RadzenLabel Text="Display Name" />
+        <RadzenTextBox @bind-Value="profile.DisplayName" Style="width:100%" />
+
+        <RadzenLabel Text="Email" Style="margin-top:1rem" />
+        <RadzenTextBox @bind-Value="profile.Email" Style="width:100%" Disabled="true" />
+
+        <RadzenLabel Text="Role" Style="margin-top:1rem" />
+        <RadzenTextBox @bind-Value="profile.Role" Style="width:100%" Disabled="true" />
+    </RadzenFieldset>
+
+    <RadzenFieldset Text="Notifications" Style="margin-top:2rem;">
+        <RadzenCheckBox @bind-Value="preferences.ReceiveEmailAlerts" />
+        <RadzenLabel Text="Receive email alerts for new messages" Style="margin-left: 0.5rem" />
+
+        <br />
+
+        <RadzenCheckBox @bind-Value="preferences.ShowRealTimeToasts" />
+        <RadzenLabel Text="Show real-time toast notifications" Style="margin-left: 0.5rem" />
+    </RadzenFieldset>
+
+    <RadzenButton Text="Save Changes" Icon="save" Click="Save" Style="margin-top:2rem;" />
+</RadzenCard>

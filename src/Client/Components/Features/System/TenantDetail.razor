@@ -1,0 +1,31 @@
+﻿@page "/system/tenants/{OrgId}"
+
+<h3>Tenant Details</h3>
+
+@if (tenant == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <RadzenTemplateForm Data="@tenant" Submit="@((TenantModel args) => Save(args))">
+        <RadzenFieldset Text="Tenant Information">
+            <RadzenLabel Text="Name" />
+            <RadzenTextBox @bind-Value="tenant.Name" Style="width: 100%;" />
+
+            <RadzenLabel Text="Org ID" Style="margin-top: 1rem;" />
+            <RadzenTextBox @bind-Value="tenant.OrgId" Disabled="true" Style="width: 100%;" />
+
+            <RadzenLabel Text="Agent URL" Style="margin-top: 1rem;" />
+            <RadzenTextBox @bind-Value="tenant.AgentUrl" Style="width: 100%;" />
+
+            <RadzenLabel Text="Status" Style="margin-top: 1rem;" />
+            <RadzenDropDown @bind-Value="tenant.Status" Data="@statuses" Style="width: 100%;" />
+
+            <RadzenLabel Text="Message Volume (30d)" Style="margin-top: 1rem;" />
+            <RadzenNumeric Value="@tenant.MessageVolume" Disabled="true" Style="width: 100%;" />
+
+            <RadzenButton Text="Save Changes" Icon="save" ButtonType="ButtonType.Submit" Style="margin-top: 1rem;" />
+        </RadzenFieldset>
+    </RadzenTemplateForm>
+}

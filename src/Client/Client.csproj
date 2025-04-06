@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="docs\admin\audit-log.md" />
+    <Content Include="docs\admin\directory.md" />
+    <Content Include="docs\admin\discovery.md" />
+    <Content Include="docs\admin\endpoints.md" />
+    <Content Include="docs\getting-started.md" />
+    <Content Include="docs\org-settings\certs.md" />
+    <Content Include="docs\org-settings\profile.md" />
+    <Content Include="docs\system\federation.md" />
+    <Content Include="docs\system\monitoring.md" />
+    <Content Include="docs\system\tenant-detail.md" />
+    <Content Include="docs\system\tenants.md" />
+    <Content Include="docs\user\compose-message.md" />
+    <Content Include="docs\user\inbox.md" />
+    <Content Include="docs\user\user-settings.md" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Markdig" Version="0.40.0" />
+		<PackageReference Include="Radzen.Blazor" Version="6.3.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+    <ProjectReference Include="..\AddressableHealthSystems.ServiceDefaults\AddressableHealthSystems.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="docs\" />
+	</ItemGroup>
+</Project>

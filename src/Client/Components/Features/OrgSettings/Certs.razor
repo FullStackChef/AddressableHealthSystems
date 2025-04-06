@@ -1,0 +1,23 @@
+@page "/org-settings/certs"
+
+<h3>Organization Certificates</h3>
+
+<RadzenDataGrid Data="@certs" TItem="CertModel" AllowPaging="true" PageSize="10" AllowFiltering="true">
+    <Columns>
+        <RadzenDataGridColumn TItem="CertModel" Property="CommonName" Title="Common Name" />
+        <RadzenDataGridColumn TItem="CertModel" Property="Thumbprint" Title="Thumbprint" />
+        <RadzenDataGridColumn TItem="CertModel" Property="Expires" Title="Expires" FormatString="{0:u}" />
+        <RadzenDataGridColumn TItem="CertModel" Property="TrustType" Title="Trust Type" />
+        <RadzenDataGridColumn TItem="CertModel" Property="Status" Title="Status" />
+        <RadzenDataGridColumn TItem="CertModel" Context="c" Title="Actions">
+            <Template Context="c">
+                <RadzenButton Icon="delete" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Danger" Click="@(args => Revoke(c))" Text="Revoke" />
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+<RadzenFieldset Text="Upload New Certificate" Style="margin-top: 2rem;">
+    <RadzenLabel Text="Select PEM / X.509 certificate" />
+    <RadzenFileInput Change="@((InputFileChangeEventArgs args)=>OnFileUpload(args))" Accept=".crt,.pem,.cer" Style="margin-top: 1rem;" />
+</RadzenFieldset>
