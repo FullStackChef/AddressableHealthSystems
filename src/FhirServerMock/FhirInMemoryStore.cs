@@ -1,10 +1,10 @@
 using System.Collections.Concurrent;
 using Hl7.Fhir.Model;
 
-namespace 
+namespace FhirServerMock;
+
+public class FhirInMemoryStore
 {
-    public class FhirInMemoryStore
-    {
         private ConcurrentDictionary<string, Communication> _communications 
             = new ConcurrentDictionary<string, Communication>();
 
@@ -16,14 +16,13 @@ namespace
 
         public IEnumerable<Communication> GetAllCommunications() => _communications.Values;
 
-        public Communication CreateCommunication(Communication comm)
+    public Communication CreateCommunication(Communication comm)
+    {
+        if (string.IsNullOrEmpty(comm.Id))
         {
-            if (string.IsNullOrEmpty(comm.Id))
-            {
-                comm.Id = Guid.NewGuid().ToString("N");
-            }
-            _communications[comm.Id] = comm;
-            return comm;
+            comm.Id = Guid.NewGuid().ToString("N");
         }
+        _communications[comm.Id] = comm;
+        return comm;
     }
 }
