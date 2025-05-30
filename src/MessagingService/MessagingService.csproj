@@ -16,6 +16,8 @@
   <ItemGroup>
     <ProjectReference Include="..\AddressableHealthSystems.ServiceDefaults\AddressableHealthSystems.ServiceDefaults.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
+    <ProjectReference Include="..\DirectoryService\DirectoryService.csproj" />
+    <ProjectReference Include="..\PeerMessagingService\PeerMessagingService.csproj" />
   </ItemGroup>
 
 </Project>

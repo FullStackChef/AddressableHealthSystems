@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Logging;
 using MessagingService.Services;
+using DirectoryService.Services;
+using PeerMessagingService.Services;
 using Dapr.Client;
 using Shared;
 
@@ -14,7 +16,7 @@ namespace MessagingService.Handlers;
 public interface ICommunicationHandler
 {
     ValueTask<Results<Ok<string>, ProblemHttpResult, ForbidHttpResult>>
-        HandleIncomingCommunicationAsync(HttpContext httpContext, Communication communication, CancellationToken cancellationToken);
+        HandleIncomingCommunicationAsync(HttpContext httpContext, Communication communication, DeliveryMode deliveryMode, CancellationToken cancellationToken);
     ValueTask<Results<Ok<Communication>, NotFound, ForbidHttpResult>>
         GetCommunicationByIdAsync(HttpContext httpContext, string id, CancellationToken cancellationToken);
 
@@ -26,7 +28,9 @@ public partial class CommunicationHandler(
     ILogger<CommunicationHandler> logger,
     IAuditService auditService,
     IAuthorizationService authorizationService,
-    DaprClient daprClient
+    DaprClient daprClient,
+    IPeerRegistryService peerRegistry,
+    PeerMessenger peerMessenger
 ) : ICommunicationHandler
 {
     public async ValueTask<
@@ -34,6 +38,7 @@ public partial class CommunicationHandler(
     > HandleIncomingCommunicationAsync(
         HttpContext httpContext,
         Communication communication,
+        DeliveryMode deliveryMode,
         CancellationToken cancellationToken
     )
     {
@@ -46,6 +51,31 @@ public partial class CommunicationHandler(
         {
             Log.AuthorizationFailed(logger, httpContext.User?.Identity?.Name ?? "Unknown");
             return TypedResults.Forbid();
+        }
+
+        if (deliveryMode == DeliveryMode.Direct)
+        {
+            var recipientId = communication.Recipient?.FirstOrDefault()?.Reference;
+            if (recipientId is not null)
+            {
+                var peer = await peerRegistry.GetPeerAsync(recipientId, cancellationToken).ConfigureAwait(false);
+                if (peer is not null)
+                {
+                    var sent = await peerMessenger.SendCommunicationAsync(peer, communication, cancellationToken).ConfigureAwait(false);
+                    if (sent)
+                    {
+                        await auditService.RecordAuditAsync(
+                            httpContext.User?.Identity?.Name ?? "Unknown",
+                            "DirectSend",
+                            communication.Id,
+                            $"Sent Communication directly to peer {peer.Id}")
+                            .ConfigureAwait(false);
+
+                        return TypedResults.Ok($"Communication sent directly to peer {peer.Id}.");
+                    }
+                }
+            }
+            // fallback to store and forward if direct delivery fails
         }
 
         // Store the Communication in FHIR server
