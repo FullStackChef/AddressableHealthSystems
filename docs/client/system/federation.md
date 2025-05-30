@@ -69,3 +69,7 @@ class FederationPeer {
 
 - `Features/System/Federation.razor`
 - `Federation.razor.cs`
+## 📂 Related Docs
+
+- [`Peer Messaging Services`](../../server/peer-messaging.md)
+
