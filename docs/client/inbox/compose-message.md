@@ -68,3 +68,7 @@ class RecipientOption {
 
 - `Features/Inbox/ComposeMessage.razor`
 - `ComposeMessage.razor.cs`
+## 📂 Related Docs
+
+- [`Peer Messaging Services`](../../server/peer-messaging.md)
+
