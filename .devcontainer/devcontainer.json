@@ -1,0 +1,16 @@
+{
+    "name": "Hyperledger Fabric Dev Container",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "devcontainer",
+    "workspaceFolder": "/workspace",
+    "customizations": {
+        "settings": {
+            "terminal.integrated.shell.linux": "/bin/bash"
+        },
+        "extensions": [
+            "ms-vscode-remote.remote-containers",
+            "golang.go",
+            "dbaeumer.vscode-eslint"
+        ]
+    }
+}
