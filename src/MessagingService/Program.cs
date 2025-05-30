@@ -1,6 +1,8 @@
 using MessagingService.Endpoints;
 using MessagingService.Handlers;
 using MessagingService.Services;
+using DirectoryService.Services;
+using PeerMessagingService.Services;
 using Hl7.Fhir.Rest; 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 builder.Services.AddDaprClient();
+builder.Services.Configure<MessagingOptions>(builder.Configuration.GetSection("Messaging"));
+builder.Services.AddHttpClient<PeerMessenger>("peermessagingservice");
+builder.Services.AddHttpClient<IPeerRegistryService, PeerRegistryClient>("directoryservice");
 
 
 // If switching to Firely FhirClient SDK, use this instead:

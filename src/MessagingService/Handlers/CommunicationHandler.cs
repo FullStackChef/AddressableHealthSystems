@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Logging;
 using MessagingService.Services;
+using DirectoryService.Services;
+using PeerMessagingService.Services;
+using Microsoft.Extensions.Options;
+using System.Linq;
 using Dapr.Client;
 using Shared;
 
@@ -26,7 +30,10 @@ public partial class CommunicationHandler(
     ILogger<CommunicationHandler> logger,
     IAuditService auditService,
     IAuthorizationService authorizationService,
-    DaprClient daprClient
+    DaprClient daprClient,
+    IOptions<MessagingOptions> options,
+    PeerMessenger peerMessenger,
+    IPeerRegistryService peerRegistry
 ) : ICommunicationHandler
 {
     public async ValueTask<
@@ -46,6 +53,39 @@ public partial class CommunicationHandler(
         {
             Log.AuthorizationFailed(logger, httpContext.User?.Identity?.Name ?? "Unknown");
             return TypedResults.Forbid();
+        }
+
+        // Direct delivery mode
+        if (options.Value.DeliveryMode == MessagingDeliveryMode.Direct)
+        {
+            var recipientId = communication.Recipient?.FirstOrDefault()?.Identifier?.Value;
+            if (!string.IsNullOrEmpty(recipientId))
+            {
+                var peer = await peerRegistry.GetPeerAsync(recipientId, cancellationToken).ConfigureAwait(false);
+                if (peer is not null)
+                {
+                    var delivered = await peerMessenger.SendCommunicationAsync(peer, communication, cancellationToken).ConfigureAwait(false);
+                    if (delivered)
+                    {
+                        await auditService.RecordAuditAsync(
+                            httpContext.User?.Identity?.Name ?? "Unknown",
+                            "DirectDelivery",
+                            communication.Id,
+                            $"Delivered directly to peer {peer.Id}")
+                            .ConfigureAwait(false);
+                        Log.DirectDeliverySucceeded(logger, peer.Id);
+                        return TypedResults.Ok("Communication delivered directly.");
+                    }
+                }
+            }
+
+            await auditService.RecordAuditAsync(
+                httpContext.User?.Identity?.Name ?? "Unknown",
+                "DirectDeliveryFailed",
+                communication.Id,
+                "Falling back to store-and-forward")
+                .ConfigureAwait(false);
+            Log.DirectDeliveryFailed(logger);
         }
 
         // Store the Communication in FHIR server
@@ -108,7 +148,15 @@ public partial class CommunicationHandler(
             Message = "Successfully stored Communication resource. ResourceId: {ResourceId}")]
         public static partial void CommunicationStored(ILogger logger, string? resourceId);
 
-        [LoggerMessage(EventId = 205, Level = LogLevel.Information,
+        [LoggerMessage(EventId = 204, Level = LogLevel.Information,
+            Message = "Delivered Communication directly to peer {PeerId}.")]
+        public static partial void DirectDeliverySucceeded(ILogger logger, string peerId);
+
+        [LoggerMessage(EventId = 205, Level = LogLevel.Warning,
+            Message = "Direct delivery failed. Falling back to store-and-forward.")]
+        public static partial void DirectDeliveryFailed(ILogger logger);
+
+        [LoggerMessage(EventId = 207, Level = LogLevel.Information,
             Message = "Published delivery event for Communication resource {ResourceId} to Dapr pubsub.")]
         public static partial void DeliveryWorkflowTriggered(ILogger logger, string resourceId);
 

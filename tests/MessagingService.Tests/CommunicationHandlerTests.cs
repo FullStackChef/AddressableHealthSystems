@@ -175,4 +175,32 @@ public class CommunicationHandlerTests
             Times.Never); // No audit if not found
     }
 
+    [Fact]
+    public async Task HandleIncomingCommunicationAsync_DirectDelivery_SkipsStorage()
+    {
+        var handlerFactory = new TestHandlerFactory();
+        handlerFactory.Options = Options.Create(new MessagingOptions { DeliveryMode = MessagingDeliveryMode.Direct });
+        var handler = handlerFactory.Create();
+        var context = CreateHttpContext();
+        var comm = new Communication
+        {
+            Id = "comm-9",
+            Recipient = [ new ResourceReference { Identifier = new Identifier { Value = "peer-1" } } ]
+        };
+
+        handlerFactory.AuthorizationServiceMock.Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<object?>(), "CanPostCommunication"))
+            .ReturnsAsync(AuthorizationResult.Success());
+
+        handlerFactory.PeerRegistryMock.Setup(r => r.GetPeerAsync("peer-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new PeerInfo("peer-1", "http://base", "endpoint", true));
+
+        handlerFactory.PeerMessengerMock.Setup(m => m.SendCommunicationAsync(It.IsAny<PeerInfo>(), comm, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+
+        var result = await handler.HandleIncomingCommunicationAsync(context, comm, CancellationToken.None);
+
+        Assert.IsType<Ok<string>>(result.Result);
+        handlerFactory.FhirStorageMock.Verify(s => s.StoreResourceAsync(It.IsAny<Communication>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
 }
