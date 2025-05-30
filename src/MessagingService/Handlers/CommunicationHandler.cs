@@ -18,7 +18,7 @@ namespace MessagingService.Handlers;
 public interface ICommunicationHandler
 {
     ValueTask<Results<Ok<string>, ProblemHttpResult, ForbidHttpResult>>
-        HandleIncomingCommunicationAsync(HttpContext httpContext, Communication communication, CancellationToken cancellationToken);
+        HandleIncomingCommunicationAsync(HttpContext httpContext, Communication communication, DeliveryMode deliveryMode, CancellationToken cancellationToken);
     ValueTask<Results<Ok<Communication>, NotFound, ForbidHttpResult>>
         GetCommunicationByIdAsync(HttpContext httpContext, string id, CancellationToken cancellationToken);
 
@@ -41,6 +41,7 @@ public partial class CommunicationHandler(
     > HandleIncomingCommunicationAsync(
         HttpContext httpContext,
         Communication communication,
+        DeliveryMode deliveryMode,
         CancellationToken cancellationToken
     )
     {
@@ -60,6 +61,7 @@ public partial class CommunicationHandler(
         {
             var recipientId = communication.Recipient?.FirstOrDefault()?.Identifier?.Value;
             if (!string.IsNullOrEmpty(recipientId))
+
             {
                 var peer = await peerRegistry.GetPeerAsync(recipientId, cancellationToken).ConfigureAwait(false);
                 if (peer is not null)
@@ -86,6 +88,7 @@ public partial class CommunicationHandler(
                 "Falling back to store-and-forward")
                 .ConfigureAwait(false);
             Log.DirectDeliveryFailed(logger);
+
         }
 
         // Store the Communication in FHIR server

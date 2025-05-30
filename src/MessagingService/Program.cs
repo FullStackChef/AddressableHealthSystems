@@ -23,6 +23,8 @@ builder.Services.AddSingleton<IFhirStorageService, FhirStorageService>();
 builder.Services.AddSingleton<IFhirClientAdapter, FhirClientAdapter>();
 builder.Services.AddSingleton<IAuditService, AuditService>();
 builder.Services.AddTransient<ICommunicationHandler, CommunicationHandler>();
+builder.Services.AddSingleton<IPeerRegistryService, PeerRegistryService>();
+builder.Services.AddScoped<PeerMessenger>();
 
 // --- Auth ---
 builder.Services.AddAuthorization(options =>

@@ -1,6 +1,9 @@
 using Dapr.Client;
 using MessagingService.Handlers;
 using MessagingService.Services;
+using DirectoryService.Services;
+using PeerMessagingService.Services;
+using System.Net.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

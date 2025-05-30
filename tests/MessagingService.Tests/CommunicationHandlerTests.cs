@@ -51,7 +51,7 @@ public class CommunicationHandlerTests
 
 
         // Act
-        var result = await handler.HandleIncomingCommunicationAsync(context, communication, CancellationToken.None);
+        var result = await handler.HandleIncomingCommunicationAsync(context, communication, DeliveryMode.StoreAndForward, CancellationToken.None);
 
         // Assert
         var okResult = Assert.IsType<Ok<string>>(result.Result);
@@ -81,7 +81,7 @@ public class CommunicationHandlerTests
                  .ReturnsAsync(AuthorizationResult.Failed());
 
         // Act
-        var result = await handler.HandleIncomingCommunicationAsync(context, new Communication(), CancellationToken.None);
+        var result = await handler.HandleIncomingCommunicationAsync(context, new Communication(), DeliveryMode.StoreAndForward, CancellationToken.None);
 
         // Assert
         Assert.IsType<ForbidHttpResult>(result.Result);
@@ -102,7 +102,7 @@ public class CommunicationHandlerTests
                         .ReturnsAsync((false, null));
 
         // Act
-        var result = await handler.HandleIncomingCommunicationAsync(context, communication, CancellationToken.None);
+        var result = await handler.HandleIncomingCommunicationAsync(context, communication, DeliveryMode.StoreAndForward, CancellationToken.None);
 
         // Assert
         Assert.IsType<ProblemHttpResult>(result.Result);
@@ -201,6 +201,75 @@ public class CommunicationHandlerTests
 
         Assert.IsType<Ok<string>>(result.Result);
         handlerFactory.FhirStorageMock.Verify(s => s.StoreResourceAsync(It.IsAny<Communication>(), It.IsAny<CancellationToken>()), Times.Never);
+}
+  public async Task HandleIncomingCommunicationAsync_SendsDirect_WhenModeDirect()
+    {
+        var handler = factory.Create();
+        var context = CreateHttpContext();
+        var communication = new Communication
+        {
+            Id = "comm-direct",
+            Recipient = [ new ResourceReference("peer-1") ],
+            Status = EventStatus.Completed
+        };
+
+        factory.AuthorizationServiceMock.Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<object?>(), "CanPostCommunication"))
+            .ReturnsAsync(AuthorizationResult.Success());
+
+        var peer = new PeerInfo("peer-1", "http://p", "http://p/msg", true);
+        factory.PeerRegistryMock.Setup(x => x.GetPeerAsync("peer-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(peer);
+        factory.PeerMessengerMock.Setup(x => x.SendCommunicationAsync(peer, communication, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+
+        var result = await handler.HandleIncomingCommunicationAsync(context, communication, DeliveryMode.Direct, CancellationToken.None);
+
+        Assert.IsType<Ok<string>>(result.Result);
+        factory.PeerMessengerMock.Verify(x => x.SendCommunicationAsync(peer, communication, It.IsAny<CancellationToken>()), Times.Once);
+        factory.FhirStorageMock.Verify(x => x.StoreResourceAsync(It.IsAny<Communication>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task HandleIncomingCommunicationAsync_FallsBack_WhenDirectFails()
+    {
+        var handler = factory.Create();
+        var context = CreateHttpContext();
+        var communication = new Communication
+        {
+            Id = "comm-fallback",
+            Recipient = [ new ResourceReference("peer-1") ],
+            Status = EventStatus.Completed
+        };
+
+        factory.AuthorizationServiceMock.Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<object?>(), "CanPostCommunication"))
+            .ReturnsAsync(AuthorizationResult.Success());
+
+        var peer = new PeerInfo("peer-1", "http://p", "http://p/msg", true);
+        factory.PeerRegistryMock.Setup(x => x.GetPeerAsync("peer-1", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(peer);
+        factory.PeerMessengerMock.Setup(x => x.SendCommunicationAsync(peer, communication, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
+
+        factory.FhirStorageMock.Setup(x => x.StoreResourceAsync(communication, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((true, "fhir-1"));
+        factory.DaprClientMock.Setup(d => d.PublishEventAsync(
+                "pubsub",
+                "messaging-delivery",
+                It.IsAny<CommunicationDeliveryEvent>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        var result = await handler.HandleIncomingCommunicationAsync(context, communication, DeliveryMode.Direct, CancellationToken.None);
+
+        Assert.IsType<Ok<string>>(result.Result);
+        factory.PeerMessengerMock.Verify(x => x.SendCommunicationAsync(peer, communication, It.IsAny<CancellationToken>()), Times.Once);
+        factory.FhirStorageMock.Verify(x => x.StoreResourceAsync(communication, It.IsAny<CancellationToken>()), Times.Once);
+        factory.DaprClientMock.Verify(d => d.PublishEventAsync(
+                "pubsub",
+                "messaging-delivery",
+                It.IsAny<CommunicationDeliveryEvent>(),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
     }
 
 }
