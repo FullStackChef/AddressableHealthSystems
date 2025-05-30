@@ -10,4 +10,6 @@ builder.AddProject<Projects.DiscoveryService>("discoveryservice");
 
 builder.AddProject<Projects.MessagingService>("messagingservice");
 
+builder.AddProject<Projects.PeerMessagingService>("peermessagingservice");
+
 builder.Build().Run();

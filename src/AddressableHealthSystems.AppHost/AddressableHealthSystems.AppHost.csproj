@@ -21,6 +21,7 @@
     <ProjectReference Include="..\DiscoveryService\DiscoveryService.csproj" />
     <ProjectReference Include="..\Gateway\Gateway.csproj" />
     <ProjectReference Include="..\MessagingService\MessagingService.csproj" />
+    <ProjectReference Include="..\PeerMessagingService\PeerMessagingService.csproj" />
   </ItemGroup>
 
 </Project>
