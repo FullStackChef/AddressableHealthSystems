@@ -1,5 +1,6 @@
 using Hl7.Fhir.Model;
 using MessagingService.Handlers;
+using Shared;
 
 namespace MessagingService.Endpoints;
 
@@ -34,7 +35,7 @@ public static class CommunicationEndpoints
         {
             var cancellationToken = context.RequestAborted;
             return await handler
-                .HandleIncomingCommunicationAsync(context, communication, cancellationToken)
+                .HandleIncomingCommunicationAsync(context, communication, DeliveryMode.StoreAndForward, cancellationToken)
                 .ConfigureAwait(false);
         })
         .WithName("PostCommunication")

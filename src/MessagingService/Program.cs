@@ -1,7 +1,9 @@
 using MessagingService.Endpoints;
 using MessagingService.Handlers;
 using MessagingService.Services;
-using Hl7.Fhir.Rest; 
+using DirectoryService.Services;
+using PeerMessagingService.Services;
+using Hl7.Fhir.Rest;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,8 @@ builder.Services.AddSingleton<IFhirStorageService, FhirStorageService>();
 builder.Services.AddSingleton<IFhirClientAdapter, FhirClientAdapter>();
 builder.Services.AddSingleton<IAuditService, AuditService>();
 builder.Services.AddTransient<ICommunicationHandler, CommunicationHandler>();
+builder.Services.AddSingleton<IPeerRegistryService, PeerRegistryService>();
+builder.Services.AddScoped<PeerMessenger>();
 
 // --- Auth ---
 builder.Services.AddAuthorization(options =>

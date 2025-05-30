@@ -18,6 +18,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\MessagingService\MessagingService.csproj" />
+    <ProjectReference Include="..\..\src\DirectoryService\DirectoryService.csproj" />
+    <ProjectReference Include="..\..\src\PeerMessagingService\PeerMessagingService.csproj" />
   </ItemGroup>
 
   <ItemGroup>
