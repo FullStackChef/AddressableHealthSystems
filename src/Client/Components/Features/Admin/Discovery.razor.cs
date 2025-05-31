@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Components;
+using System.Net.Http.Json;
 
 namespace Client.Components.Features.Admin;
 
 public partial class Discovery : ComponentBase
 {
-    private readonly HttpClient httpClient = new();
+    [Inject] public HttpClient HttpClient { get; set; } = new();
 
     protected DiscoveryRequest discoveryRequest = new();
     protected DiscoveryResult? discoveryResult;
@@ -15,7 +16,7 @@ public partial class Discovery : ComponentBase
 
         try
         {
-            var response = await httpClient.PostAsJsonAsync("https://localhost:5001/discover", request);
+            var response = await HttpClient.PostAsJsonAsync("https://localhost:5001/discover", request);
 
             if (response.IsSuccessStatusCode)
             {
@@ -32,11 +33,30 @@ public partial class Discovery : ComponentBase
         }
     }
 
-    protected Task SyncToDirectory()
+    protected async Task SyncToDirectory()
     {
-        // TODO: Call DirectoryService to sync Organization + Endpoint
-        Console.WriteLine($"[Sync] Pushing {discoveryResult?.RemoteName} to local directory...");
-        return Task.CompletedTask;
+        if (discoveryResult is null)
+            return;
+
+        var peer = new
+        {
+            id = discoveryResult.RemoteName,
+            baseUrl = discoveryRequest.EndpointUrl,
+            messagingEndpoint = discoveryRequest.EndpointUrl,
+            isTrusted = discoveryResult.IsTrusted
+        };
+
+        Console.WriteLine($"[Sync] Pushing {discoveryResult.RemoteName} to local directory...");
+
+        try
+        {
+            var response = await HttpClient.PostAsJsonAsync("http://localhost:5131/peers", peer);
+            response.EnsureSuccessStatusCode();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[Sync] Failed: {ex.Message}");
+        }
     }
 
     private DiscoveryResult CreateErrorResult(string url, string errorMessage) => new()
