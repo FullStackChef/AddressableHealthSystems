@@ -17,6 +17,11 @@
         <RadzenLabel Text="Body" Style="margin-top: 1rem;" />
         <RadzenTextArea @bind-Value="message.Body" Rows="6" Style="width: 100%;" />
 
-        <RadzenButton Text="Send" Icon="send" Style="margin-top: 1rem;" ButtonType="ButtonType.Submit" />
+    <RadzenButton Text="Send" Icon="send" Style="margin-top: 1rem;" ButtonType="ButtonType.Submit" />
     </RadzenFieldset>
 </RadzenTemplateForm>
+
+@if (!string.IsNullOrEmpty(statusMessage))
+{
+    <p>@statusMessage</p>
+}
