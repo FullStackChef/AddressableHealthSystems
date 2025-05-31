@@ -1,30 +1,51 @@
 using Microsoft.AspNetCore.Components;
+using Hl7.Fhir.Model;
+using Client.Services;
 
 namespace Client.Components.Features.OrgSettings;
 
 public partial class Profile : ComponentBase
 {
+    private const string OrgId = "local-org";
+
+    [Inject] public IOrganizationFhirService FhirService { get; set; } = default!;
+
     protected OrgProfile org = new();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        // TODO: Load from FHIR Organization resource
-        org = new OrgProfile
+        var resource = await FhirService.GetOrganizationAsync(OrgId);
+        if (resource is not null)
         {
-            Name = "Greenfield Medical Group",
-            Identifier = "urn:oid:2.16.840.1.113883.19.5",
-            Email = "info@greenfield.org",
-            Phone = "(555) 123-4567",
-            Address = "123 Main Street, Springfield, ST 99999"
-        };
+            org = new OrgProfile
+            {
+                Name = resource.Name ?? string.Empty,
+                Identifier = resource.Identifier?.FirstOrDefault()?.Value ?? string.Empty,
+                Email = resource.Telecom?.FirstOrDefault(t => t.System == ContactPoint.ContactPointSystem.Email)?.Value ?? string.Empty,
+                Phone = resource.Telecom?.FirstOrDefault(t => t.System == ContactPoint.ContactPointSystem.Phone)?.Value ?? string.Empty,
+                Address = resource.Address?.FirstOrDefault()?.Text ?? string.Empty
+            };
+        }
     }
 
-    protected Task Save(OrgProfile updated)
+    protected async Task Save(OrgProfile updated)
     {
         org = updated;
-        Console.WriteLine($"Saved org: {org.Name} / {org.Identifier}");
-        // TODO: PUT to FHIR /Organization/{id}
-        return Task.CompletedTask;
+
+        var resource = new Organization
+        {
+            Id = OrgId,
+            Name = org.Name,
+            Identifier = [ new Identifier { Value = org.Identifier } ],
+            Telecom =
+            [
+                new ContactPoint(ContactPoint.ContactPointSystem.Email, null, org.Email),
+                new ContactPoint(ContactPoint.ContactPointSystem.Phone, null, org.Phone)
+            ],
+            Address = [ new Address { Text = org.Address } ]
+        };
+
+        await FhirService.SaveOrganizationAsync(resource);
     }
 
     public class OrgProfile

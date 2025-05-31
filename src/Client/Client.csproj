@@ -23,10 +23,11 @@
     <Content Include="docs\user\user-settings.md" />
   </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Markdig" Version="0.40.0" />
-		<PackageReference Include="Radzen.Blazor" Version="6.3.2" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Markdig" Version="0.40.0" />
+    <PackageReference Include="Radzen.Blazor" Version="6.3.2" />
+    <PackageReference Include="Hl7.Fhir.R5" Version="5.11.4" />
+  </ItemGroup>
 
 	<ItemGroup>
     <ProjectReference Include="..\AddressableHealthSystems.ServiceDefaults\AddressableHealthSystems.ServiceDefaults.csproj" />

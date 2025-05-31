@@ -1,5 +1,6 @@
 using Client.Components;
 using Client.Services;
+using Hl7.Fhir.Rest;
 using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,10 @@ builder.Services.AddRazorComponents()
 builder.Services.AddRadzenComponents();
 
 builder.Services.AddSingleton<IDocumentationService, FileDocumentationService>();
+
+builder.Services.AddSingleton(new FhirClient("https://localhost:5172"));
+builder.Services.AddSingleton<IFhirOrganizationClient, FhirOrganizationClient>();
+builder.Services.AddSingleton<IOrganizationFhirService, FhirOrganizationService>();
 
 builder.Services.AddCascadingAuthenticationState();
 
