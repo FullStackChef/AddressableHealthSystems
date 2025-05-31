@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Components;
+using System.Net.Http.Json;
 
 namespace Client.Components.Features.Inbox;
 
 public partial class ComposeMessage : ComponentBase
 {
+    [Inject] public HttpClient HttpClient { get; set; } = default!;
+
     protected OutgoingMessage message = new();
     protected List<RecipientOption> recipientOptions = new();
+    protected string? statusMessage;
 
     protected override void OnInitialized()
     {
@@ -18,11 +22,31 @@ public partial class ComposeMessage : ComponentBase
 
     }
 
-    protected Task SendMessage(OutgoingMessage outgoingMessage)
+    protected async Task SendMessage(OutgoingMessage outgoingMessage)
     {
         Console.WriteLine($"[SEND] To: {message.To}, Subject: {message.Subject}");
-        // TODO: POST to message dispatch API (e.g., FHIR Communication or message router)
-        return Task.CompletedTask;
+
+        var communication = new
+        {
+            resourceType = "Communication",
+            status = "completed",
+            recipient = new[] { new { identifier = new { value = outgoingMessage.To } } },
+            subject = new { text = outgoingMessage.Subject },
+            payload = new[] { new { contentString = outgoingMessage.Body } },
+            sent = DateTimeOffset.UtcNow
+        };
+
+        try
+        {
+            var response = await HttpClient.PostAsJsonAsync("/api/communication", communication);
+            statusMessage = response.IsSuccessStatusCode
+                ? "Message sent successfully."
+                : $"Failed to send message ({(int)response.StatusCode}).";
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Error sending message: {ex.Message}";
+        }
     }
 
     public class OutgoingMessage
