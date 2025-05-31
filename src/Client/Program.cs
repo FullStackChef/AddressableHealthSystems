@@ -12,6 +12,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddRadzenComponents();
 
 builder.Services.AddSingleton<IDocumentationService, FileDocumentationService>();
+builder.Services.AddSingleton<ISettingsService, FileSettingsService>();
 
 builder.Services.AddSingleton(new FhirClient("https://localhost:5172"));
 builder.Services.AddSingleton<IFhirOrganizationClient, FhirOrganizationClient>();

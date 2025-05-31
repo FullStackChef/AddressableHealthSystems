@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Components;
+using Client.Services;
 
 namespace Client.Components.Pages;
 
 public partial class Settings : ComponentBase
 {
+    [Inject] public ISettingsService SettingsService { get; set; } = default!;
     protected UserProfile profile = new();
     protected UserPreferences preferences = new();
 
@@ -24,11 +26,20 @@ public partial class Settings : ComponentBase
         };
     }
 
-    protected Task Save()
+    protected async Task Save()
     {
         Console.WriteLine($"[Save] {profile.DisplayName}, email alerts: {preferences.ReceiveEmailAlerts}");
-        // TODO: call SettingsService
-        return Task.CompletedTask;
+
+        var settings = new UserSettings
+        {
+            DisplayName = profile.DisplayName,
+            Email = profile.Email,
+            Role = profile.Role,
+            ReceiveEmailAlerts = preferences.ReceiveEmailAlerts,
+            ShowRealTimeToasts = preferences.ShowRealTimeToasts
+        };
+
+        await SettingsService.SaveAsync(settings);
     }
 
     public class UserProfile
@@ -44,3 +55,4 @@ public partial class Settings : ComponentBase
         public bool ShowRealTimeToasts { get; set; }
     }
 }
+
