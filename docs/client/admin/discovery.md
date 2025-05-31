@@ -24,6 +24,7 @@ The Discovery page allows administrators to initiate and manage AHS-to-AHS disco
   - Name, Version, Role, Trust Status
 - **Sync to Directory** button (if compatible)
   - Imports `Organization`, `Endpoint`, and other supported resources
+  - Posts the peer information to the local **DirectoryService** (`/peers`)
 
 ## 🧱 UI Components
 

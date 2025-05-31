@@ -29,7 +29,7 @@ The Discovery page allows you to connect with other AHS instances by entering th
 2. Enter the **remote FHIR base URL**
 3. Click **Discover**
 4. Review the remote instance's metadata
-5. Click **Sync to Directory** if it's a trusted system
+5. Click **Sync to Directory** if it's a trusted system. This posts the peer details to the local **DirectoryService**.
 
 ---
 
