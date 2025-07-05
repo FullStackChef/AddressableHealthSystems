@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Link } from '@tanstack/react-router'
+import { Link, useLocation } from 'react-router-dom'
 import {
   Mail,
   Edit,
@@ -61,6 +61,8 @@ const navigation = [
 ]
 
 export function Sidebar({ open, onClose }: SidebarProps) {
+  const location = useLocation()
+
   return (
     <>
       {/* Mobile overlay */}
@@ -97,7 +99,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                   {section.children.map((item) => (
                     <Button
                       key={item.href}
-                      variant="ghost"
+                      variant={location.pathname === item.href ? "secondary" : "ghost"}
                       className="w-full justify-start"
                       asChild
                     >

@@ -5,7 +5,7 @@ import { DataTable } from '@/components/ui/data-table'
 import { ColumnDef } from '@tanstack/react-table'
 import { formatDate } from '@/lib/utils'
 import { Eye } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
+import { Link } from 'react-router-dom'
 
 interface Message {
   id: string
@@ -48,7 +48,7 @@ const columns: ColumnDef<Message>[] = [
     header: 'Actions',
     cell: ({ row }) => (
       <Button variant="ghost" size="sm" asChild>
-        <Link to="/messages/$id" params={{ id: row.original.id }}>
+        <Link to={`/messages/${row.original.id}`}>
           <Eye className="h-4 w-4" />
         </Link>
       </Button>

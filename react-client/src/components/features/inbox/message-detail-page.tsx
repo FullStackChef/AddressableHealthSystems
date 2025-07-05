@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
-import { Link, useParams } from '@tanstack/react-router'
+import { Link, useParams } from 'react-router-dom'
 import { formatDate } from '@/lib/utils'
 
 interface MessageDetail {
@@ -30,7 +30,7 @@ const mockMessages: MessageDetail[] = [
 ]
 
 export function MessageDetailPage() {
-  const { id } = useParams({ from: '/messages/$id' })
+  const { id } = useParams<{ id: string }>()
   const message = mockMessages.find((m) => m.id === id)
 
   if (!message) {

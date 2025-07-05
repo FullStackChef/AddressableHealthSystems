@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Link } from '@tanstack/react-router'
+import { Link } from 'react-router-dom'
 
 interface HeaderProps {
   onMenuClick: () => void
