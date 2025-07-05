@@ -7,7 +7,7 @@ import {
   Settings,
   Users,
   Search,
-  Contacts,
+  AddressBook,
   FileText,
   Network,
   Building,
@@ -37,7 +37,7 @@ const navigation = [
     children: [
       { name: 'Endpoints', href: '/admin/endpoints', icon: Network },
       { name: 'Discovery', href: '/admin/discovery', icon: Search },
-      { name: 'Directory', href: '/admin/directory', icon: Contacts },
+      { name: 'Directory', href: '/admin/directory', icon: AddressBook },
       { name: 'Audit Log', href: '/admin/audit', icon: FileText },
     ],
   },
