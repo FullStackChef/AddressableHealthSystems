@@ -12,8 +12,8 @@ export function HomePage() {
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            Use the navigation menu to access different features of the system including messaging,
-            administration, and system management.
+            Use the navigation menu to access different features of the system including
+            administration, system management, and organization settings.
           </p>
         </CardContent>
       </Card>

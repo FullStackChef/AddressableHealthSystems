@@ -2,8 +2,6 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Link, useLocation } from 'react-router-dom'
 import {
-  Mail,
-  Edit,
   Settings,
   Users,
   Search,
@@ -23,14 +21,6 @@ interface SidebarProps {
 }
 
 const navigation = [
-  {
-    name: 'Inbox',
-    icon: Mail,
-    children: [
-      { name: 'Messages', href: '/inbox', icon: Mail },
-      { name: 'Compose', href: '/inbox/compose', icon: Edit },
-    ],
-  },
   {
     name: 'Admin',
     icon: Settings,
