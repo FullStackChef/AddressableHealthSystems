@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Search, Sync } from 'lucide-react'
+import { Search, RefreshCw } from 'lucide-react'
 
 interface DiscoveryRequest {
   endpointUrl: string
@@ -150,7 +150,7 @@ export function DiscoveryPage() {
 
             {result.isAhsCompatible && (
               <Button onClick={syncToDirectory} className="flex items-center gap-2">
-                <Sync className="h-4 w-4" />
+                <RefreshCw className="h-4 w-4" />
                 Sync to Directory
               </Button>
             )}
